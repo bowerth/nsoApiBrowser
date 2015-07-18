@@ -1,4 +1,4 @@
-## shiny::runApp(file.path(dbpath, "GitHub", "apiBrowser"), launch.browser = FALSE, port = 3838)
+## shiny::runApp(file.path(dbpath, "GitHub", "nsoApi", "inst", "nsoApiBrowser"), launch.browser = FALSE, port = 3838)
 ## source(file.path(dbpath, "GitHub", "apiBrowser", "master.R"))
 
 
@@ -9,3 +9,4 @@ source("app.R")
 shinyApp(ui, server, options = list(port = 4848, launch.browser = FALSE))
 
 ## ?shiny::shinyApp
+

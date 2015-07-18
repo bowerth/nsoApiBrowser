@@ -1,7 +1,7 @@
 
 apiCBS_queryData <- reactive({
 
-    data <- stanApi::cbsODataAPI(api = ui.apiCBS.baseurl,
+    data <- nsoApi::cbsODataAPI(api = ui.apiCBS.baseurl,
                                  DSD = input$apicbs_datasetname,
                                  scheme = "TypedDataSet",
                                  query = FALSE)
@@ -32,12 +32,20 @@ apiCBS_parameterlist <- reactive({
 output$uiCBS_parametervalues <- renderUI({
 
     queryData <- apiCBS_queryData()
+
+    ## queryData <- read.csv(file = file.path(dlpath, "CBS_82572ENG.csv"))
+    
     if (is.null(queryData) | length(queryData)==0) return()
 
+    ## names(queryData)
+    ## parameterlist <- "SectorBranchesSIC2008"
+    
     parameterlist <- apiCBS_parameterlist()
 
-    ui.all <- stanApi::selectInputs(data = queryData,
-                                    names = parameterlist,
+    queryData.dimlist <- lapply(subset(queryData, select = parameterlist), unique)    
+
+    ui.all <- nsoApi::selectInputs(list = queryData.dimlist,
+                                    ## names = parameterlist,
                                     prefix = ui.apiCBS.prefix,
                                     size = 10)
 
@@ -48,8 +56,8 @@ output$uiCBS_parametervalues <- renderUI({
 apiCBS_queryData_filter <- reactive({
 
     queryData <- apiCBS_queryData()
-    ## if (is.null(queryData) | length(queryData)==0) return()
-    if (is.null(queryData) | length(queryData)==0 | is.null(input) | length(input)==0) return()
+    if (is.null(queryData) | length(queryData)==0) return()
+    ## if (is.null(queryData) | length(queryData)==0 | is.null(input) | length(input)==0) return()
 
     parameterlist <- apiCBS_parameterlist() # needed for inputIds
 
@@ -85,7 +93,7 @@ apiCBS_queryData_xts <- reactive({
 
     queryData.filter <- apiCBS_queryData_filter()
 
-    data.xts <- stanApi::cbsOdataDFtoXTS(data = queryData.filter)
+    data.xts <- nsoApi::cbsOdataDFtoXTS(data = queryData.filter)
 
     return(data.xts)
 })
@@ -119,9 +127,9 @@ output$dygraphs_apiCBS <- renderDygraph({
 output$datatable_apiCBS <- renderDataTable({
 
     queryData <- apiCBS_queryData()
-    queryData.filter <- apiCBS_queryData_filter()
-    ## return(queryData)
-    return(queryData.filter)
+    return(queryData)
+    ## queryData.filter <- apiCBS_queryData_filter()
+    ## return(queryData.filter)
 
 }, options = list(pageLength = 20,
                   lengthMenu = c(10, 20, 50, 100)))

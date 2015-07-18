@@ -5,14 +5,14 @@
 
 apiBEA_parameterlist <- reactive({
 
-    api.param <- list(USERID = ui.apiBEA.apikey,
+    api.param <- list(USERID = ui.apiBEA.userid,
                       METHOD = "GETPARAMETERLIST",
                       DATASETNAME = input$apibea_datasetname,
                       ## RESULTFORMAT = input$apibea_resultformat
                       RESULTFORMAT = ui.apiBEA.resultformat
                       )
 
-    data <- stanApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
+    data <- nsoApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
     ## parameterlist <- sapply(data[[1]][[2]][[1]], function(x) x$ParameterName)
     parameterlist <- data$BEAAPI$Results$Parameter$ParameterName
 
@@ -47,7 +47,7 @@ apiBEA_parametervalues <- reactive({
     names(parametervalue.year)[1] <- "Year"
     parametervalue.all <- c(parametervalue.all, parametervalue.year)
 
-    api.param <- list(USERID = ui.apiBEA.apikey,
+    api.param <- list(USERID = ui.apiBEA.userid,
                       ## METHOD = apibea_method,
                       METHOD = "GETDATA",
                       DATASETNAME = apibea_datasetname,
@@ -84,7 +84,7 @@ output$uiBEA_parametervalues <- renderUI({
             multiple <- ui.apiBEA.datasetname$multiple[ui.apiBEA.datasetname$name==input$apibea_datasetname]
         } else multiple <- TRUE
 
-        api.param <- list(USERID = ui.apiBEA.apikey,
+        api.param <- list(USERID = ui.apiBEA.userid,
                           METHOD = "GETPARAMETERVALUES",
                           DATASETNAME = input$apibea_datasetname,
                           PARAMETERNAME = input$apibea_parameterlist[d],
@@ -92,11 +92,11 @@ output$uiBEA_parametervalues <- renderUI({
                           RESULTFORMAT = ui.apiBEA.resultformat
                           )
 
-        data <- stanApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
+        data <- nsoApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
 
         ## print(data)
 
-        ## dim.value <- stanApi::beaJSONtoDF(List=data, third = 1)[, 1]
+        ## dim.value <- nsoApi::beaJSONtoDF(List=data, third = 1)[, 1]
         ## dim.value <- data.frame(Key = data$BEAAPI$Results$ParamValue$Key)[ , 1]
         ## dim.value <- data$BEAAPI$Results$ParamValue$Key
         dim.value <- data$BEAAPI$Results$ParamValue[ , 1]
@@ -144,7 +144,7 @@ apiBEA_queryData <- reactive({
     ## if (apibea_resultraw) {
     ##     data <- beaAPI(api.param = api.param, curl = ui.apiBEA.curl, raw = TRUE)
     ## } else {
-        List <- stanApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
+        List <- nsoApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
         ## data <- beaAPI(api.param = api.param, curl = ui.apiBEA.curl, raw = apibea_resultraw)
 
         ## ## data values are stored in different places of list - variation across datasetname
@@ -152,7 +152,7 @@ apiBEA_queryData <- reactive({
         ## third = valuefield: 4: NIPA, GDPbyIndustry; 7: RegionalData
         ## data <- beaJSONtoDF(List=List, third = valuefield)
 
-    ## data <- stanApi::beaJSONtoDF(List=List, third = 4)
+    ## data <- nsoApi::beaJSONtoDF(List=List, third = 4)
     ## data <- data.frame(c = c(1,2), d = c(2,3))
     data <- List$BEAAPI$Results$Data
 
@@ -180,7 +180,7 @@ apiBEA_queryData_xts <- reactive({
 
     queryData <- apiBEA_queryData()
     ## data <- read.csv(file = file.path(dlpath, "apiBEA_data.csv"))
-    queryData.xts <- stanApi::beaDFtoXTS(data = queryData)
+    queryData.xts <- nsoApi::beaDFtoXTS(data = queryData)
 
     return(queryData.xts)
 

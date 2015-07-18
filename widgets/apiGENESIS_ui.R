@@ -1,13 +1,10 @@
-## see ~/Dropbox/GitHub/desk/inst/industry/tools/indic/apiBEA.R
-
+## ui.apiGENESIS.kennung and ui.apiGENESIS.passwort set in global.R
 
 ui.apiGENESIS.datasetname = c("81000BJ002", "81000BJ105", "81000BJ102")
 
 ui.apiGENESIS.curl <- RCurl::getCurlHandle()
 ## ui.proxy defined in global.R
 RCurl::curlSetOpt(.opts = list(proxy = ui.proxy), curl = ui.apiGENESIS.curl)
-ui.apiGENESIS.user <- "GP103009"
-ui.apiGENESIS.password <- "STI004"
 
 apiGENESIS.col1 <- column(width = 4,
                            box(

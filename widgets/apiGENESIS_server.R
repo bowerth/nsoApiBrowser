@@ -17,8 +17,8 @@ apiGENESIS_parametervalues <- reactive({
 
     api.param.datenexport <- list(
         method = "DatenExport",
-        kennung = "GP103009",
-        passwort = "STI004",
+        kennung = ui.apiGENESIS.kennung,
+        passwort = ui.apiGENESIS.passwort,
         ## namen = "81000BJ002",
         ## namen = "81000BJ105",
         ## namen = "81000BJ102",
@@ -50,11 +50,11 @@ apiGENESIS_queryData <- reactive({
 
     api.param.datenexport <- apiGENESIS_parametervalues()
 
-    xml.list.datenexport <- stanApi::genesisAPI(api.param = api.param.datenexport,
+    xml.list.datenexport <- nsoApi::genesisAPI(api.param = api.param.datenexport,
                                                 service = "ExportService",
                                                 curl = ui.apiGENESIS.curl)
 
-    ## data <- stanApi::beaJSONtoDF(List=List, third = 4)
+    ## data <- nsoApi::beaJSONtoDF(List=List, third = 4)
     data <- genesisXMLtoDF(xml.list = xml.list.datenexport)
 
     return(data)
@@ -69,13 +69,13 @@ apiGENESIS_queryData_xts <- reactive({
     ## h(queryData)
     ## names(queryData) <- sub("ZI.WERT", "ZI-WERT", names(queryData))
     ## h(queryData)
-    ## ## stanApi::genesisDFtoXTS
-    ## data.xts <- stanApi::genesisDFtoXTS(data = queryData)
+    ## ## nsoApi::genesisDFtoXTS
+    ## data.xts <- nsoApi::genesisDFtoXTS(data = queryData)
     ## h(data.xts)
     ## rownames(data.xts)
     ## write.csv(data.xts, file = file.path(dlpath, "apiGENESIS_data_xts.csv"))
 
-    queryData.xts <- stanApi::genesisDFtoXTS(data = queryData)
+    queryData.xts <- nsoApi::genesisDFtoXTS(data = queryData)
     return(queryData.xts)
 
 })

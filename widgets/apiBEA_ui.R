@@ -1,4 +1,4 @@
-## see ~/Dropbox/GitHub/desk/inst/industry/tools/indic/apiBEA.R
+## ui.apiBEA.userid defined in global.R
 
 ui.apiBEA.datasetname = rbind.data.frame(
     c("GDPbyIndustry", TRUE),
@@ -17,7 +17,6 @@ ui.apiBEA.parameterlist <- c("Frequency", "Industry", "TableID", "Year")
 ui.apiBEA.curl <- RCurl::getCurlHandle()
 ## ui.proxy defined in global.R
 RCurl::curlSetOpt(.opts = list(proxy = ui.proxy), curl = ui.apiBEA.curl)
-ui.apiBEA.apikey <- "7023E825-15FF-488D-B8D9-D70E6F67D439"
 ## ui.apiBEA.method <- c("GETDATA")
 ui.apiBEA.resultformat <- c("JSON")
 ui.apiBEA.year <- as.numeric(c(1970:2014))
