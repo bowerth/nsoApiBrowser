@@ -1,0 +1,68 @@
+## see ~/Dropbox/GitHub/desk/inst/industry/tools/indic/apiBEA.R
+
+ui.apiBEA.datasetname = rbind.data.frame(
+    c("GDPbyIndustry", TRUE),
+    c("NIPA", FALSE),
+    c("FixedAssets", FALSE)
+    ## c("RegionalData", 7),
+    ## c("NIUnderlyingDetail", 1),
+    ## c("MNE", 1),
+    ## c("ITA", 1),
+    ## c("IIP", 1)
+)
+names(ui.apiBEA.datasetname) <- c("name", "multiple")
+
+ui.apiBEA.parameterlist <- c("Frequency", "Industry", "TableID", "Year")
+ui.apiBEA.proxy <- "wsg-proxy.oecd.org:80"
+ui.apiBEA.curl <- getCurlHandle()
+curlSetOpt(.opts = list(proxy = ui.apiBEA.proxy), curl = ui.apiBEA.curl)
+ui.apiBEA.apikey <- "7023E825-15FF-488D-B8D9-D70E6F67D439"
+## ui.apiBEA.method <- c("GETDATA")
+ui.apiBEA.resultformat <- c("JSON")
+
+
+apiBEA.input <- column(width = 4,
+                       box(
+                           width = NULL,
+                           title = "Controls",
+
+                           ## sliderInput(inputId = "apiBEA_viz_plot_height", label = "Height:", min = 0, max = 1000, value = 450, step = 50),
+                           ## sliderInput(inputId = "apiBEA_viz_plot_width", label = "Width:", min = 400, max = 1200, value = 850, step = 50),
+
+                           ## selectInput("apibea_method", "Method:", choices = ui.apiBEA.method, selected = "GETDATA", multiple = FALSE),
+                           selectInput("apibea_datasetname", "Datasetname:",
+                                       choices = as.character(ui.apiBEA.datasetname[["name"]]),
+                                       ## selected = "FixedAssets",
+                                       ## selected = "GDPbyIndustry",
+                                       selected = "NIPA",
+                                       multiple = FALSE),
+                           uiOutput("uiaB_parameterlist"),
+                           uiOutput("uiaB_parametervalues"),
+                           uiOutput("uiaB_timeperiod"),
+
+                           ## selectInput("apibea_resultformat", "Resultformat:", "JSON"),
+                           ## wellPanel(
+                               ## h5("Summary"),
+                               ## checkboxInput("apibea_showparam", "Show API parameters", FALSE),
+                               ## checkboxInput("apibea_showquery", "Show Query", FALSE),
+                               ## checkboxInput("apibea_showdata", "Show Data", FALSE),
+                               ## checkboxInput("apibea_resultraw", "Return JSON string", FALSE)
+                           ## )
+                           ## ,
+                           downloadButton("download_apiBEA", "Download data (CSV)")
+
+                       )
+                       )
+
+apiBEA.output <- column(width = 8,
+                        ##       box(title = "Time series plot", plotOutput("plot1", height = 350), width = NULL, collapsible = TRUE)
+                       ## ,
+                        box(title = "Time series plot", dygraphOutput("dygraphs_apiBEA"), width = NULL, collapsible = TRUE)
+                        ,
+                        box(title = "Parameters", verbatimTextOutput("summary_apiBEA"), width = NULL, collapsible = TRUE)
+                        ## ,
+                        ## box(title = "Data table", dataTableOutput("datatable_apiBEA"), width = NULL, collapsible = TRUE)
+                        ##       ## ,
+                        ##       box(title = "Data table", dataTableOutput("table1"), width = NULL, collapsible = TRUE)
+
+                        )
