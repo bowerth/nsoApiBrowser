@@ -1,16 +1,20 @@
+ui.apiBEA.curl <- RCurl::getCurlHandle()
+RCurl::curlSetOpt(.opts = list(proxy = isolate(input$sidebar_httpproxy)), curl = ui.apiBEA.curl)
 
 
 ## input <- list(apibea_datasetname = "FixedAssets",
 ##               apibea_resultformat = "JSON")
 
-apiBEA_parameterlist <- reactive({
+.apiBEA_parameterlist <- reactive({
 
-    api.param <- list(USERID = ui.apiBEA.userid,
-                      METHOD = "GETPARAMETERLIST",
-                      DATASETNAME = input$apibea_datasetname,
-                      ## RESULTFORMAT = input$apibea_resultformat
-                      RESULTFORMAT = ui.apiBEA.resultformat
-                      )
+  api.param <- list(
+    ## USERID = ui.apiBEA.userid,
+    USERID = input$apibea_userid,
+    METHOD = "GETPARAMETERLIST",
+    DATASETNAME = input$apibea_datasetname,
+    ## RESULTFORMAT = input$apibea_resultformat
+    RESULTFORMAT = ui.apiBEA.resultformat
+    )
 
     data <- nsoApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
     ## parameterlist <- sapply(data[[1]][[2]][[1]], function(x) x$ParameterName)
@@ -22,14 +26,15 @@ apiBEA_parameterlist <- reactive({
     return(parameterlist)
 })
 
-apiBEA_parametervalues <- reactive({
+.apiBEA_parametervalues <- reactive({
 
-    apibea_year <- input$apibea_year
+    ## apibea_year <- input$apibea_year
+    queryyear <- input$sidebar_queryyear
     ## apibea_method <- input$apibea_method
     apibea_datasetname <- input$apibea_datasetname
     ## apibea_resultformat <- input$apibea_resultformat
 
-    apibea_parameterlist <- apiBEA_parameterlist()
+    apibea_parameterlist <- .apiBEA_parameterlist()
 
     parametervalue.all <- NULL
     for (d in seq(along = apibea_parameterlist)) {
@@ -40,20 +45,22 @@ apiBEA_parametervalues <- reactive({
         parametervalue.all <- c(parametervalue.all, parametervalue)
     }
 
-    ## apibea_year <- c(1997,1999)
+    ## queryyear <- c(1997,1999)
     ## Add year from time slider
-    parametervalue.year <- gsub(" ", "", toString(c(apibea_year[1]:apibea_year[2])))
+    parametervalue.year <- gsub(" ", "", toString(c(queryyear[1]:queryyear[2])))
     parametervalue.year <- list(parametervalue.year)
     names(parametervalue.year)[1] <- "Year"
     parametervalue.all <- c(parametervalue.all, parametervalue.year)
 
-    api.param <- list(USERID = ui.apiBEA.userid,
-                      ## METHOD = apibea_method,
-                      METHOD = "GETDATA",
-                      DATASETNAME = apibea_datasetname,
-                      ## RESULTFORMAT = apibea_resultformat
-                      RESULTFORMAT = ui.apiBEA.resultformat
-                      )
+    api.param <- list(
+      ## USERID = ui.apiBEA.userid,
+      USERID = input$apibea_userid,
+      ## METHOD = apibea_method,
+      METHOD = "GETDATA",
+      DATASETNAME = apibea_datasetname,
+      ## RESULTFORMAT = apibea_resultformat
+      RESULTFORMAT = ui.apiBEA.resultformat
+      )
     api.param <- c(api.param, parametervalue.all)
 
     return(api.param)
@@ -62,13 +69,13 @@ apiBEA_parametervalues <- reactive({
 
 output$uiBEA_parameterlist <- renderUI({
 
-    parameterlist <- apiBEA_parameterlist()
+    parameterlist <- .apiBEA_parameterlist()
 
     parameterlist <- parameterlist[!tolower(parameterlist)%in%c("year")]
     parameterlist <- parameterlist[!tolower(parameterlist)%in%c("showmillions")]
 
     list(
-        selectInput("apibea_parameterlist", "Filter Dimensions:",
+        selectInput("apibea_parameterlist", "Reduce Dataset",
                     choices = parameterlist,
                     selected = parameterlist, multiple = TRUE, selectize = FALSE)
     )
@@ -84,13 +91,15 @@ output$uiBEA_parametervalues <- renderUI({
             multiple <- ui.apiBEA.datasetname$multiple[ui.apiBEA.datasetname$name==input$apibea_datasetname]
         } else multiple <- TRUE
 
-        api.param <- list(USERID = ui.apiBEA.userid,
-                          METHOD = "GETPARAMETERVALUES",
-                          DATASETNAME = input$apibea_datasetname,
-                          PARAMETERNAME = input$apibea_parameterlist[d],
-                          ## RESULTFORMAT = input$apibea_resultformat
-                          RESULTFORMAT = ui.apiBEA.resultformat
-                          )
+        api.param <- list(
+          ## USERID = ui.apiBEA.userid,
+          USERID = input$apibea_userid,
+          METHOD = "GETPARAMETERVALUES",
+          DATASETNAME = input$apibea_datasetname,
+          PARAMETERNAME = input$apibea_parameterlist[d],
+          ## RESULTFORMAT = input$apibea_resultformat
+          RESULTFORMAT = ui.apiBEA.resultformat
+          )
 
         data <- nsoApi::beaAPI(api.param = api.param, curl = ui.apiBEA.curl)
 
@@ -102,7 +111,7 @@ output$uiBEA_parametervalues <- renderUI({
         dim.value <- data$BEAAPI$Results$ParamValue[ , 1]
         dim.value <- as.character(dim.value)
 
-        command <- paste0('selectInput("apibea_dim', d, '", "', input$apibea_parameterlist[d], ':", ',
+        command <- paste0('selectInput("apibea_dim', d, '", "', input$apibea_parameterlist[d], '", ',
                           'choices = ', paste0('c("', gsub(', ', '", "', toString(dim.value)), '")'), ', ',
                           'selected = "', dim.value[1], '", multiple = ', multiple, ', selectize = FALSE)'
                           )
@@ -127,17 +136,17 @@ output$uiBEA_parametervalues <- renderUI({
 
 ## })
 
-apiBEA_queryData <- reactive({
+.apiBEA_queryData <- reactive({
 
-    ## parameterlist <- apiBEA_parameterlist()
+    ## parameterlist <- .apiBEA_parameterlist()
     apibea_parameterlist <- input$apibea_parameterlist
-    apibea_year <- input$apibea_year
+    queryyear <- input$sidebar_queryyear
     ## apibea_method <- input$apibea_method
     apibea_datasetname <- input$apibea_datasetname
     ## apibea_resultformat <- input$apibea_resultformat
     ## apibea_resultraw <- input$apibea_resultraw
 
-    api.param <- apiBEA_parametervalues()
+    api.param <- .apiBEA_parametervalues()
 
     if (is.null(api.param) | length(api.param)==0) return()
 
@@ -176,11 +185,70 @@ apiBEA_queryData <- reactive({
 
 })
 
-apiBEA_queryData_xts <- reactive({
+.apiBEA_filterlist <- reactive({
 
-    queryData <- apiBEA_queryData()
-    ## data <- read.csv(file = file.path(dlpath, "apiBEA_data.csv"))
-    queryData.xts <- nsoApi::beaDFtoXTS(data = queryData)
+  filterlist <- as.character(ui.apiBEA.datasetname$filterlist[ui.apiBEA.datasetname$name==input$apibea_datasetname])
+  return(filterlist)
+
+})
+
+
+output$uiBEA_filtervalues <- renderUI({
+
+    queryData <- .apiBEA_queryData()
+    if (is.null(queryData) | length(queryData)==0) return()
+
+    filterlist <- .apiBEA_filterlist()
+
+    queryData.dimlist <- lapply(subset(queryData, select = filterlist), unique)
+
+    ## ui.apiBEA.prefix <- "apibea_"
+
+    ui.all <- nsoApi::selectInputs(list = queryData.dimlist,
+                                    ## names = filterlist,
+                                   prefix = ui.apiBEA.prefix
+                                   ,
+                                   minsize = 20
+                                   )
+
+    return(ui.all)
+
+})
+
+.apiBEA_queryData_filter <- reactive({
+
+    queryData <- .apiBEA_queryData()
+    if (is.null(queryData) | length(queryData)==0) return()
+
+    filterlist <- .apiBEA_filterlist() # needed for inputIds
+
+    filter.param <- paste(filterlist, paste0('input$', ui.apiBEA.prefix, filterlist), sep = ' %in% ')
+    eval(parse(text =
+               paste0('queryData.filter <- subset(queryData, ',
+                      paste(filter.param, collapse = " & ")
+                      ,
+                      ')')
+               )
+         )
+
+    return(queryData.filter)
+
+})
+
+
+.apiBEA_queryData_xts <- reactive({
+
+    ## queryData <- .apiBEA_queryData()
+    ## ## data <- read.csv(file = file.path(dlpath, ".apiBEA_data.csv"))
+    ## queryData.xts <- nsoApi::beaDFtoXTS(data = queryData)
+
+    queryData.filter <- .apiBEA_queryData_filter()
+    if (is.null(queryData.filter) | length(queryData.filter) == 0) return()
+
+    queryData.xts <- nsoApi::beaDFtoXTS(data = queryData.filter)
+
+    ## print(queryData.filter)
+    ## print(queryData.xts)
 
     return(queryData.xts)
 
@@ -188,18 +256,18 @@ apiBEA_queryData_xts <- reactive({
 
 output$summary_apiBEA <- renderPrint({
     ## apibea_datasetname = input$apibea_datasetname
-    ## apibea_year = input$apibea_year
+    ## queryyear = input$sidebar_queryyear
     ## apibea_parameterlist = input$apibea_parameterlist
-    apiBEA_parametervalues <- apiBEA_parametervalues()
-    ## apiBEA_queryData <- apiBEA_queryData()
+    api.param <- .apiBEA_parametervalues()
+    ## .apiBEA_queryData <- .apiBEA_queryData()
 
     summary.list <- list(
-        Parameters = apiBEA_parametervalues
+        Parameters = api.param
        ## ,
-       ##  Data = h(apiBEA_queryData)
+       ##  Data = h(.apiBEA_queryData)
     )
 
-    ## queryData.xts <- as.data.frame(apiBEA_queryData_xts())
+    ## queryData.xts <- as.data.frame(.apiBEA_queryData_xts())
     ## summary.list = lapply(queryData.xts, summary)
 
     ## queryData.xts <- read.csv(file.path(dlpath, "data_apiBEA (2).csv"))
@@ -209,16 +277,51 @@ output$summary_apiBEA <- renderPrint({
     return(summary.list)
 })
 
+output$uiBEA_queryuri <- renderUI({
+
+    api.param <- .apiBEA_parametervalues()
+    if (is.null(api.param) | length(api.param)==0) return()
+    queryURI <- nsoApi::beaAPI(api.param = api.param, query = TRUE)
+
+    textInput("apibea_queryuri", "Query URI", value = queryURI)
+
+    ## http://www.bea.gov/api/data/?&USERID=7023E825-15FF-488D-B8D9-D70E6F67D439&METHOD=GETDATA&DATASETNAME=NIPA&RESULTFORMAT=JSON&TableID=1&Frequency=A&Year=1970,1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015&
+    ## return(queryURI)
+
+})
+
 output$datatable_apiBEA <- renderDataTable({
-    ## queryData <- apiBEA_queryData()
-    ## queryData <- cbind.data.frame(TIME = rownames(apiBEA_queryData()), apiBEA_queryData())
-    queryData <- apiBEA_queryData()
-    ## queryData <- subset(queryData, select = c("variable", "Year", "DataValue"))
-    ## queryData$time <- rownames(queryData)
-    ## queryData.d <- reshape2::dcast(queryData, Year ~ variable, value.var = "DataValue")
-    return(queryData)
-}, options = list(pageLength = 20,
-                  lengthMenu = c(10, 20, 50, 100)))
+
+  ## queryData <- .apiBEA_queryData()
+  ## return(queryData)
+
+  queryData.filter <- .apiBEA_queryData_filter()
+  if (is.null(queryData.filter) | length(queryData.filter) == 0) return()
+
+  drop.col <- c("TableID", "LineNumber", "CL_UNIT", "UNIT_MULT", "NoteRef")
+  queryData.filter <- subset(queryData.filter, select = names(queryData.filter)[!names(queryData.filter)%in%drop.col])
+
+  return(queryData.filter)
+
+## }, options = list(
+##      pageLength = 20,
+##      lengthMenu = c(10, 20, 50, 100)
+##      ))
+}, options = ui.datatable.options)
+
+.apiBEA_dygraph <- reactive({
+
+    queryData.xts <- .apiBEA_queryData_xts()
+    if (is.null(queryData.xts) | length(queryData.xts) == 0) return()
+
+    d1 <- nsoApiBrowser_dygraph(
+        data = queryData.xts,
+        show.boolean = input$sidebar_dygraphlegendshow
+    )
+
+    return(d1)
+
+})
 
 output$dygraphs_apiBEA <- renderDygraph({
 
@@ -229,8 +332,9 @@ output$dygraphs_apiBEA <- renderDygraph({
         ## rownames(sample_matrix)
 
         ## apibea_resultraw <- input$apibea_resultraw
-        ## queryData <- apiBEA_queryData()
-        queryData.xts <- apiBEA_queryData_xts()
+        ## queryData <- .apiBEA_queryData()
+        ## queryData.xts <- .apiBEA_queryData_xts()
+        ## if (is.null(queryData.xts) | length(queryData.xts) == 0) return()
 
         ## if (apibea_resultraw) return()
 
@@ -249,18 +353,31 @@ output$dygraphs_apiBEA <- renderDygraph({
 
         ## require(magrittr)
         ## require(dygraphs)
-        d1 <- dygraph(queryData.xts) %>% dyLegend(width = 400,
-                                                    hideOnMouseOut = TRUE,
-                                                    ## show = "onmouseover"
-                                                    show = "never"
-                                                    )
 
-        return(d1)
+        ## show <- ifelse(input$sidebar_dygraphlegendshow, "always", "never")
+
+        ## d1 <- dygraph(queryData.xts) %>%
+        ##   dyLegend(
+        ##     width = 400,
+        ##     hideOnMouseOut = TRUE,
+        ##     ## show = "onmouseover"
+        ##     ## show = "never"
+        ##     show = show
+        ##     )
+
+        ## d1 <- nsoApiBrowser_dygraph(
+        ##   data = queryData.xts,
+        ##   show.boolean = input$sidebar_dygraphlegendshow
+        ##   )
+
+        ## return(d1)
+
+        return(.apiBEA_dygraph())
 
     }
 )
 
-output$download_apiBEA_data <- downloadHandler(
+output$download_data_apiBEA <- downloadHandler(
     filename = function() {
         paste0(
             'BEA_',
@@ -269,24 +386,44 @@ output$download_apiBEA_data <- downloadHandler(
     },
     content = function(file) {
 
-      if (input$download_apiBEA_data_format=="df") {
-          write.csv(apiBEA_queryData(), file, row.names = FALSE)
-      } else if (input$download_apiBEA_data_format=="xts") {
-          write.csv(as.data.frame(apiBEA_queryData_xts()), file, row.names = TRUE)
+      if (input$apibea_download_data_format=="df_all") {
+        write.csv(.apiBEA_queryData(), file, row.names = FALSE)
+
+      } else if (input$apibea_download_data_format=="df_filter") {
+        write.csv(.apiBEA_queryData_filter(), file, row.names = FALSE)
+
+      } else if (input$apibea_download_data_format=="xts") {
+        write.csv(as.data.frame(.apiBEA_queryData_xts()), file, row.names = TRUE)
       }
 
   }
   )
 
 
-## output$download_apiBEA_parameter <- downloadHandler(
+output$download_plot_apiBEA <- downloadHandler(
+    filename = function() {
+        paste0(
+            'BEA_',
+            input$apibea_datasetname,
+            '.html')
+    },
+    content = function(file) {
+
+        htmlwidgets:::saveWidget(widget = .apiBEA_dygraph(), file = file, selfcontained = TRUE, libdir = NULL)
+
+  }
+  )
+
+
+
+## output$download_parameter_apiBEA <- downloadHandler(
 ##     filename = function() {
 ##         paste0(
-##           'apiBEA_parameter',
+##           '.apiBEA_parameter',
 ##           '.rdata')
 ##       },
 ##   content = function(file) {
-##     api.param <- apiBEA_parametervalues()
+##     api.param <- .apiBEA_parametervalues()
 ##     save(api.param, file = file)
 ##   }
 ##   )

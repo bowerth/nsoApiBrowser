@@ -3,7 +3,7 @@
 
 ui.apiCBS.baseurl <- "http://opendata.cbs.nl/ODataApi/OData"
 ui.apiCBS.datasetname <- c("82572ENG", "83068ENG")
-ui.apiCBS.prefix <- "apiCBS_"
+ui.apiCBS.prefix <- "apicbs_"
 
 ui.apiCBS.curl <- RCurl::getCurlHandle()
 ## ui.proxy defined in global.R
@@ -16,36 +16,47 @@ apiCBS.col1 <- column(width = 4,
                           ## title = "Controls",
 
                           ## selectInput("apibea_method", "Method:", choices = ui.apiCBS.method, selected = "GETDATA", multiple = FALSE),
-                          selectInput("apicbs_datasetname", "Dataset:",
+                          selectInput("apicbs_datasetname", "Dataset",
                                       choices = ui.apiCBS.datasetname,
                                       selected = "82572ENG",
                                       multiple = FALSE)
                          ,
-                          uiOutput("uiCBS_parametervalues")
+                          uiOutput("uiCBS_filtervalues")
                       )
 
                       )
 
 
 apiCBS.col2 <- column(width = 8,
-                      box(
-                          width = 6,
-                          radioButtons("download_apiCBS_data_format", "Download Data Format",
-                                       choices = list(
-                                           "Data Table" = "df"
-                                           ,
-                                            "Time Series" = "xts"
-                                       )
-                                       )
-                      )
 
-                     ,
                       box(
-                          width = 6,
-                          downloadButton("download_apiCBS_data", "Download Data")
+                          width = 3,
+
+                          radioButtons("download_data_format_apiCBS", "Download Format",
+                                       choices = list(
+                                           "Data Table (all)" = "df_all",
+                                           "Data Table (filter)" = "df_filter",
+                                           "Time Series" = "xts")
+                                       )
+                          )
+                          ,
+
+                      box(
+                          width = 3,
+                          downloadButton("download_data_apiCBS", "Download Data")
+                          ,
+                          downloadButton("download_plot_apiCBS", "Download Plots")
                       )
+                      ,
+
+                      box(
+                          width = 6
+                         ,
+                          uiOutput("uiCBS_queryuri")
+                        )
+
                       ## ,
-                      ## downloadButton("download_apiCBS_parameter", "Download Parameters (rdata)")
+                      ## downloadButton("download_parameter_apiCBS", "Download Parameters (rdata)")
 
                       ## output
                       ,
