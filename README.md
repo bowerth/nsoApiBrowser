@@ -1,6 +1,7 @@
-# apiBrowser
-UI for OpenData
+# nsoApiBrowser
+
+UI for NSO Web Services
 
 <!-- This is running on shinyapps.io: https://rjsdmx.shinyapps.io/sdmxBrowser/ -->
 
-<!-- ![sdmxBrowser screenshot](assets/sdmxBrowser.png) -->
+![nsoApiBrowser screenshot](../../assets/nsoApiBrowser.png)
