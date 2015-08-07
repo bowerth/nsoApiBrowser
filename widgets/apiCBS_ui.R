@@ -29,17 +29,16 @@ apiCBS.col1 <- column(width = 4,
 
 apiCBS.col2 <- column(width = 8,
 
-                      box(
-                          width = 3,
-
-                          radioButtons("download_data_format_apiCBS", "Download Format",
-                                       choices = list(
-                                           "Data Table (all)" = "df_all",
-                                           "Data Table (filter)" = "df_filter",
-                                           "Time Series" = "xts")
-                                       )
-                          )
-                          ,
+                      ## box(
+                      ##     width = 3,
+                      ##     radioButtons("download_data_format_apiCBS", "Download Format",
+                      ##                  choices = list(
+                      ##                      "Data Table (all)" = "df_all",
+                      ##                      "Data Table (filter)" = "df_filter",
+                      ##                      "Time Series" = "xts")
+                      ##                  )
+                      ##     )
+                      ##     ,
 
                       box(
                           width = 3,
@@ -50,7 +49,7 @@ apiCBS.col2 <- column(width = 8,
                       ,
 
                       box(
-                          width = 6
+                          width = 9
                          ,
                           uiOutput("uiCBS_queryuri")
                         )
@@ -69,10 +68,16 @@ apiCBS.col2 <- column(width = 8,
                                           height = "400px")
                             )
 
+                     ,
+                      box(width = 12,
+                          collapsible = TRUE,
+                          dataTableOutput("datatable_apiCBS")
+                          )
+
                       )
 
 ## apiCBS.output <- column(width = 8,
-apiCBS.row2 <- column(width = 12,
+## apiCBS.row2 <- column(width = 12,
 ## apiCBS.output <- row(height = 8,
                         ##       box(title = "Time series plot", plotOutput("plot1", height = 350), width = NULL, collapsible = TRUE)
                        ## ,
@@ -80,11 +85,9 @@ apiCBS.row2 <- column(width = 12,
                         ## ,
                         ## box(title = "Summary", verbatimTextOutput("summary_apiCBS"), width = NULL, collapsible = TRUE)
                         ## ,
-                        box(width = NULL,
-                        ## box(height = NULL,
-                            ## title = "Data table",
-                            dataTableOutput("datatable_apiCBS"), collapsible = TRUE)
+
+
                         ##       ## ,
                         ##       box(title = "Data table", dataTableOutput("table1"), width = NULL, collapsible = TRUE)
 
-                        )
+                        ## )

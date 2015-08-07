@@ -208,7 +208,8 @@ output$uiBEA_filtervalues <- renderUI({
                                     ## names = filterlist,
                                    prefix = ui.apiBEA.prefix
                                    ,
-                                   minsize = 20
+                                   ## minsize = 20
+                                   minsize = input$sidebar_maxfilter
                                    )
 
     return(ui.all)
@@ -316,7 +317,7 @@ output$datatable_apiBEA <- renderDataTable({
 
     d1 <- nsoApiBrowser_dygraph(
         data = queryData.xts,
-        show.boolean = input$sidebar_dygraphlegendshow
+        show.boolean = ifelse("legendshow" %in% input$sidebar_plotoptions, TRUE, FALSE)
     )
 
     return(d1)
@@ -354,7 +355,7 @@ output$dygraphs_apiBEA <- renderDygraph({
         ## require(magrittr)
         ## require(dygraphs)
 
-        ## show <- ifelse(input$sidebar_dygraphlegendshow, "always", "never")
+        ## show <- ifelse(input$sidebar_legendshow, "always", "never")
 
         ## d1 <- dygraph(queryData.xts) %>%
         ##   dyLegend(
@@ -367,7 +368,7 @@ output$dygraphs_apiBEA <- renderDygraph({
 
         ## d1 <- nsoApiBrowser_dygraph(
         ##   data = queryData.xts,
-        ##   show.boolean = input$sidebar_dygraphlegendshow
+        ##   show.boolean = input$sidebar_legendshow
         ##   )
 
         ## return(d1)
@@ -386,13 +387,13 @@ output$download_data_apiBEA <- downloadHandler(
     },
     content = function(file) {
 
-      if (input$apibea_download_data_format=="df_all") {
+      if (input$sidebar_download_data_format=="df_all") {
         write.csv(.apiBEA_queryData(), file, row.names = FALSE)
 
-      } else if (input$apibea_download_data_format=="df_filter") {
+      } else if (input$sidebar_download_data_format=="df_filter") {
         write.csv(.apiBEA_queryData_filter(), file, row.names = FALSE)
 
-      } else if (input$apibea_download_data_format=="xts") {
+      } else if (input$sidebar_download_data_format=="xts") {
         write.csv(as.data.frame(.apiBEA_queryData_xts()), file, row.names = TRUE)
       }
 

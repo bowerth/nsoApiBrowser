@@ -44,7 +44,9 @@ output$uiCBS_filtervalues <- renderUI({
     queryData.dimlist <- lapply(subset(queryData, select = filterlist), unique)
     ui.all <- nsoApi::selectInputs(list = queryData.dimlist,
                                     prefix = ui.apiCBS.prefix,
-                                    minsize = 10)
+                                   ## minsize = 10
+                                   minsize = input$sidebar_maxfilter
+                                   )
     return(ui.all)
 
 })
@@ -113,9 +115,10 @@ output$uiCBS_queryuri <- renderUI({
     ##                                             )
 
     d1 <- nsoApiBrowser_dygraph(
-      data = queryData.xts,
-      show.boolean = input$sidebar_dygraphlegendshow
-      )
+        data = queryData.xts,
+        ## show.boolean = input$sidebar_legendshow
+        show.boolean = ifelse("legendshow" %in% input$sidebar_plotoptions, TRUE, FALSE)
+    )
 
     return(d1)
 
@@ -145,13 +148,13 @@ output$download_data_apiCBS <- downloadHandler(
     },
     content = function(file) {
 
-      if (input$download_data_format_apiCBS=="df_all") {
+      if (input$sidebar_download_data_format=="df_all") {
         write.csv(.apiCBS_queryData(), file, row.names = FALSE)
 
-      } else if (input$download_data_format_apiCBS=="df_filter") {
+      } else if (input$sidebar_download_data_format=="df_filter") {
         write.csv(.apiCBS_queryData_filter(), file, row.names = FALSE)
 
-      } else if (input$download_data_format_apiCBS=="xts") {
+      } else if (input$sidebar_download_data_format=="xts") {
         write.csv(as.data.frame(.apiCBS_queryData_xts()), file, row.names = TRUE)
       }
 

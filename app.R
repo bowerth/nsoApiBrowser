@@ -19,30 +19,51 @@ sidebar <- dashboardSidebar(
 
         menuItem("About", tabName = "about", icon = icon("info"))
         ,
-        menuItem("NLD: CBS STATLINE", tabName = "apiCBS", icon = icon("line-chart"))
-        ,
 
+        menuItem("PX-Web: Nordic Countries", tabName = "apiPXWEB", icon = icon("line-chart"))
+       ,
+
+        menuItem("GBR: Office of National Statistics", tabName = "apiONS", icon = icon("bar-chart"))
+       ,
+        menuItem("NLD: CBS STATLINE", tabName = "apiCBS", icon = icon("line-chart"))
+       ,
         ## test server availability: https://www-genesis.destatis.de/genesis/
         menuItem("DEU: DESTATIS GENESIS", tabName = "apiGENESIS", icon = icon("line-chart"))
-        ,
-
+       ,
         menuItem("USA: Bureau of Economic Analysis", tabName = "apiBEA", icon = icon("line-chart"))
-
-      ,
-      checkboxInput("sidebar_dygraphlegendshow", "Show Plot Legend", value = TRUE)
-      ,
-      sliderInput("sidebar_queryyear", "Time Period",
-                  min = ui.queryyear.min,
-                  max = ui.queryyear.max,
-                  ## value = c(1970, 2014),
-                  value = c(ui.queryyear.min, ui.queryyear.max),
-                  sep = "")
-      ,
-      textInput("sidebar_httpproxy", "HTTP Proxy", ui.httpproxy) # ifelse(exists("ui.httpproxy"), ui.httpproxy, ""))
+       ,
+        radioButtons("sidebar_download_data_format", "Data Download Format",
+                     choices = list(
+                         "Data Table (all)" = "df_all",
+                         "Data Table (filter)" = "df_filter",
+                         ## "Time Series" = "xts"
+                         "Plot Format" = "xts"
+                     )
+                     )
+       ,
+        checkboxGroupInput("sidebar_plotoptions", "Plot Options",
+                           c("Show Legend" = "legendshow",
+                             "Percentage Axis" = "percentaxis"),
+                           ## selected = c("legendshow", "percentaxis")
+                           selected = c("legendshow")
+                           )
+       ,
+        sliderInput("sidebar_queryyear", "Time Period",
+                    min = ui.queryyear.min,
+                    max = ui.queryyear.max,
+                    ## value = c(1970, 2014),
+                    value = c(ui.queryyear.min, ui.queryyear.max),
+                    sep = "")
+       ,
+        numericInput("sidebar_maxfilter", "Max. Filter Fields", value = 10)
+       ,
+        textInput("sidebar_httpproxy", "HTTP Proxy", ui.httpproxy) # ifelse(exists("ui.httpproxy"), ui.httpproxy, ""))
 
     )
 )
 
+source(file.path("widgets", "apiPXWEB_ui.R"))
+source(file.path("widgets", "apiONS_ui.R"))
 source(file.path("widgets", "apiCBS_ui.R"))
 source(file.path("widgets", "apiGENESIS_ui.R"))
 source(file.path("widgets", "apiBEA_ui.R"))
@@ -53,18 +74,31 @@ body <- dashboardBody(
 
       tabItem(tabName = "about",
               about.output)
-      ,
-      tabItem(tabName = "apiCBS",
+
+       ,
+        tabItem(tabName = "apiPXWEB",
+                fluidRow(apiPXWEB.col1,
+                         apiPXWEB.col2)
+                )
+
+       ,
+        tabItem(tabName = "apiONS",
+                fluidRow(apiONS.col1,
+                         apiONS.col2)
+                )
+
+       ,
+        tabItem(tabName = "apiCBS",
                 fluidRow(apiCBS.col1,
-                         apiCBS.col2),
-                fluidRow(apiCBS.row2)
+                         apiCBS.col2)
                 )
 
        ,
         tabItem(tabName = "apiGENESIS",
                 fluidRow(apiGENESIS.col1,
-                         apiGENESIS.col2),
-                fluidRow(apiGENESIS.row2)
+                         apiGENESIS.col2)
+               ## ,
+               ##  fluidRow(apiGENESIS.row2)
                 )
 
         ,
@@ -88,6 +122,8 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
 
+    source(file.path("widgets", "apiPXWEB_server.R"), local = TRUE)
+    source(file.path("widgets", "apiONS_server.R"), local = TRUE)
     source(file.path("widgets", "apiCBS_server.R"), local = TRUE)
     source(file.path("widgets", "apiGENESIS_server.R"), local = TRUE)
     source(file.path("widgets", "apiBEA_server.R"), local = TRUE)

@@ -29,9 +29,13 @@ apiBEA.col1 <- column(width = 3,
                         width = 12,
                         ## title = "API Query",
 
-                        selectInput("apibea_datasetname", "Datasetname",
+                          textInput("apibea_userid", "User ID", value = ifelse(exists("ui.apiBEA.userid"), ui.apiBEA.userid, ""))
+                         ,
+
+                          selectInput("apibea_datasetname", "Datasetname",
                                     choices = as.character(ui.apiBEA.datasetname[["name"]]),
-                                    selected = "NIPA",
+                                    ## selected = "NIPA",
+                                    selected = "GDPbyIndustry",
                                     multiple = FALSE)
                         ,
                         ## sliderInput("apibea_year", "Time Period",
@@ -58,21 +62,6 @@ apiBEA.col1 <- column(width = 3,
 
 apiBEA.col2 <- column(width = 9,
 
-                      box(width = 12,
-                              uiOutput("uiBEA_queryuri")
-                          )
-                     ,
-
-                      box(width = 3,
-                          radioButtons("apibea_download_data_format", "Download Format",
-                                       choices = list(
-                                         "Data Table (all)" = "df_all",
-                                         "Data Table (filter)" = "df_filter",
-                                         "Time Series" = "xts")
-                                       )
-                          )
-                     ,
-
                       box(width = 3,
                           downloadButton("download_data_apiBEA", "Download Data") # these are outputs and inputIds at the same time
                          ,
@@ -80,12 +69,27 @@ apiBEA.col2 <- column(width = 9,
                           )
                       ,
 
-                      box(width = 6,
-                          wellPanel(
-                              textInput("apibea_userid", "User ID", value = ifelse(exists("ui.apiBEA.userid"), ui.apiBEA.userid, ""))
-                            )
+                      box(width = 9,
+                              uiOutput("uiBEA_queryuri")
                           )
-                      ,
+                     ,
+
+                     ##  box(width = 3,
+                     ##      radioButtons("apibea_download_data_format", "Download Format",
+                     ##                   choices = list(
+                     ##                     "Data Table (all)" = "df_all",
+                     ##                     "Data Table (filter)" = "df_filter",
+                     ##                     "Time Series" = "xts")
+                     ##                   )
+                     ##      )
+                     ## ,
+
+                      ## box(width = 6,
+                      ##     wellPanel(
+                              ## textInput("apibea_userid", "User ID", value = ifelse(exists("ui.apiBEA.userid"), ui.apiBEA.userid, ""))
+                      ##       )
+                      ##     )
+                      ## ,
 
                       box(width = 12, collapsible = TRUE,
                           title = "Time Series Plot",

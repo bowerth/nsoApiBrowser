@@ -110,7 +110,8 @@ output$uiGENESIS_filtervalues <- renderUI({
                                     ## names = filterlist,
                                    prefix = ui.apiGENESIS.prefix
                                    ,
-                                   minsize = 10
+                                   ## minsize = 10
+                                   minsize = input$sidebar_maxfilter
                                    )
 
     return(ui.all)
@@ -213,9 +214,10 @@ output$uiGENESIS_queryuri <- renderUI({
     if (is.null(queryData.xts) | length(queryData.xts)==0) return()
 
     d1 <- nsoApiBrowser_dygraph(
-      data = queryData.xts,
-      show.boolean = input$sidebar_dygraphlegendshow
-      )
+        data = queryData.xts,
+        ## show.boolean = input$sidebar_legendshow
+        show.boolean = ifelse("legendshow" %in% input$sidebar_plotoptions, TRUE, FALSE)
+    )
 
     return(d1)
 
@@ -248,13 +250,13 @@ output$download_data_apiGENESIS <- downloadHandler(
       },
   content = function(file) {
 
-      if (input$apigenesis_download_data_format=="df_all") {
+      if (input$sidebar_download_data_format=="df_all") {
         write.csv(.apiGENESIS_queryData(), file, row.names = FALSE)
 
-      } else if (input$apigenesis_download_data_format=="df_filter") {
+      } else if (input$sidebar_download_data_format=="df_filter") {
         write.csv(.apiGENESIS_queryData_filter(), file, row.names = FALSE)
 
-      } else if (input$apigenesis_download_data_format=="xts") {
+      } else if (input$sidebar_download_data_format=="xts") {
         write.csv(as.data.frame(.apiGENESIS_queryData_xts()), file, row.names = TRUE)
       }
 
