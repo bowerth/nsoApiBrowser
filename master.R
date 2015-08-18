@@ -1,4 +1,4 @@
-## shiny::runApp(file.path(dbpath, "GitHub", "nsoApi", "inst", "nsoApiBrowser"), launch.browser = FALSE, port = 3838)
+## shiny::runApp(file.path(dbpath, "GitHub", "nsoApi", "inst", "nsoApiBrowser"), launch.browser = FALSE, port = 5858)
 ## source(file.path(dbpath, "GitHub", "apiBrowser", "master.R"))
 
 ## remove.packages("nsoApi")

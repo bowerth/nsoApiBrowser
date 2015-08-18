@@ -61,7 +61,7 @@ apiONS.col2 <- column(width = 8,
                           width = 3,
                           downloadButton("download_data_apiONS", "Download Data")
                           ,
-                          downloadButton("download_plot_apiONS", "Download Plots")
+                          downloadButton("download_plot_apiONS", "Download Plot")
                       )
 
                      ,

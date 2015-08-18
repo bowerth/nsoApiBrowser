@@ -44,7 +44,7 @@ apiCBS.col2 <- column(width = 8,
                           width = 3,
                           downloadButton("download_data_apiCBS", "Download Data")
                           ,
-                          downloadButton("download_plot_apiCBS", "Download Plots")
+                          downloadButton("download_plot_apiCBS", "Download Plot")
                       )
                       ,
 

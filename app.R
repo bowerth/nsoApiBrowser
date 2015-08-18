@@ -17,6 +17,9 @@ sidebar <- dashboardSidebar(
     ## disable = TRUE,
     sidebarMenu(
 
+        menuItem("StatAT: Statistics Austria", tabName = "apiSTATAT", icon = icon("line-chart"))
+       ,
+
         menuItem("About", tabName = "about", icon = icon("info"))
         ,
 
@@ -62,6 +65,7 @@ sidebar <- dashboardSidebar(
     )
 )
 
+source(file.path("widgets", "apiSTATAT_ui.R"))
 source(file.path("widgets", "apiPXWEB_ui.R"))
 source(file.path("widgets", "apiONS_ui.R"))
 source(file.path("widgets", "apiCBS_ui.R"))
@@ -72,7 +76,13 @@ source(file.path("widgets", "about_ui.R"))
 body <- dashboardBody(
     tabItems(
 
-      tabItem(tabName = "about",
+        tabItem(tabName = "apiSTATAT",
+                fluidRow(apiSTATAT.col1,
+                         apiSTATAT.col2)
+                )
+
+       ,
+        tabItem(tabName = "about",
               about.output)
 
        ,
@@ -122,6 +132,7 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
 
+    source(file.path("widgets", "apiSTATAT_server.R"), local = TRUE)
     source(file.path("widgets", "apiPXWEB_server.R"), local = TRUE)
     source(file.path("widgets", "apiONS_server.R"), local = TRUE)
     source(file.path("widgets", "apiCBS_server.R"), local = TRUE)

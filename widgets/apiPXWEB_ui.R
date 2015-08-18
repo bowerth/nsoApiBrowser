@@ -2,12 +2,14 @@
 
 ## ui.apiPXWEB.baseurl <- "http://opendata.pxweb.nl/ODataApi/OData"
 ui.apiPXWEB.baseurl <- list(
-    "SCB Sweden" = "http://api.scb.se/OV0104/v1/doris/en/ssd")
+  "SCB Sweden" = "http://api.scb.se/OV0104/v1/doris/en/ssd",
+  "PXNET2 Finland" = "http://pxnet2.stat.fi/PXWEB/api/v1/en/StatFin"
+  )
 
-ui.apiPXWEB.datasetname <- list(
-    NR0103ENS2010T08A = "NR/NR0103/NR0103E/NR0103ENS2010T08A", # Value added, detail components
-    NR0103ENS2010T09A = "NR/NR0103/NR0103E/NR0103ENS2010T09A" # Output, intermediate consumption
-)
+## ui.apiPXWEB.datasetname <- list(
+##     NR0103ENS2010T08A = "NR/NR0103/NR0103E/NR0103ENS2010T08A", # Value added, detail components
+##     NR0103ENS2010T09A = "NR/NR0103/NR0103E/NR0103ENS2010T09A" # Output, intermediate consumption
+## )
 
 ui.apiPXWEB.prefix <- "apipxweb_"
 
@@ -19,14 +21,16 @@ apiPXWEB.col1 <- column(width = 4,
                           selectInput("apipxweb_baseurl", "Provider",
                                       ## choices = as.character(ui.apiPXWEB.provider[["name"]]),
                                       choices = ui.apiPXWEB.baseurl,
-                                      selected = "http://api.scb.se/OV0104/v1/doris/en/ssd",
+                                      selected = ui.apiPXWEB.baseurl[[1]], # "http://api.scb.se/OV0104/v1/doris/en/ssd"
                                       multiple = FALSE)
-                         ,
-                          selectInput("apipxweb_datasetname", "Dataset",
-                                      choices = ui.apiPXWEB.datasetname,
-                                      ## selected = "NR0103ENS2010T08A",
-                                      selected = "NR/NR0103/NR0103E/NR0103ENS2010T08A",
-                                      multiple = FALSE)
+                         ## ,
+                         ##  selectInput("apipxweb_datasetname", "Dataset",
+                         ##              choices = ui.apiPXWEB.datasetname,
+                         ##              ## selected = "NR0103ENS2010T08A",
+                         ##              selected = "NR/NR0103/NR0103E/NR0103ENS2010T08A",
+                         ##              multiple = FALSE)
+                          ,
+                          uiOutput("uiPXWEB_datasetname")
                          ,
                           uiOutput("uiPXWEB_filtervalues")
                       )
@@ -38,7 +42,7 @@ apiPXWEB.col2 <- column(width = 8,
 
                         box(width = 3,
                             downloadButton("download_data_apiPXWEB", "Download Data"),
-                            downloadButton("download_plot_apiPXWEB", "Download Plots"))
+                            downloadButton("download_plot_apiPXWEB", "Download Plot"))
                        ,
                         box(width = 9,
                             uiOutput("uiPXWEB_queryuri"))
