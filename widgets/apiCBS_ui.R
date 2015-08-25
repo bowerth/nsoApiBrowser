@@ -2,7 +2,13 @@
 
 
 ui.apiCBS.baseurl <- "http://opendata.cbs.nl/ODataApi/OData"
-ui.apiCBS.datasetname <- c("82572ENG", "83068ENG")
+ui.apiCBS.datasetname <- c(
+    "82572ENG", # Output and income by activity; National Accounts
+    "82578ENG", # Compensation; economic activity
+    "82579ENG", # Employment; economic activity, sex
+    "82640NED", # GFCF (Kapitaalgoederenvoorraad)
+    "83068ENG"  # Supply and use by products of activity
+)
 ui.apiCBS.prefix <- "apicbs_"
 
 ui.apiCBS.curl <- RCurl::getCurlHandle()

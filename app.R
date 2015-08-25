@@ -17,13 +17,16 @@ sidebar <- dashboardSidebar(
     ## disable = TRUE,
     sidebarMenu(
 
-        menuItem("StatAT: Statistics Austria", tabName = "apiSTATAT", icon = icon("line-chart"))
+        menuItem("SSB: Statistics Norway", tabName = "apiSSB", icon = icon("line-chart"))
        ,
 
         menuItem("About", tabName = "about", icon = icon("info"))
         ,
 
         menuItem("PX-Web: Nordic Countries", tabName = "apiPXWEB", icon = icon("line-chart"))
+       ,
+
+        menuItem("StatAT: Statistics Austria", tabName = "apiSTATAT", icon = icon("line-chart"))
        ,
 
         menuItem("GBR: Office of National Statistics", tabName = "apiONS", icon = icon("bar-chart"))
@@ -65,6 +68,7 @@ sidebar <- dashboardSidebar(
     )
 )
 
+source(file.path("widgets", "apiSSB_ui.R"))
 source(file.path("widgets", "apiSTATAT_ui.R"))
 source(file.path("widgets", "apiPXWEB_ui.R"))
 source(file.path("widgets", "apiONS_ui.R"))
@@ -76,9 +80,9 @@ source(file.path("widgets", "about_ui.R"))
 body <- dashboardBody(
     tabItems(
 
-        tabItem(tabName = "apiSTATAT",
-                fluidRow(apiSTATAT.col1,
-                         apiSTATAT.col2)
+        tabItem(tabName = "apiSSB",
+                fluidRow(apiSSB.col1,
+                         apiSSB.col2)
                 )
 
        ,
@@ -89,6 +93,12 @@ body <- dashboardBody(
         tabItem(tabName = "apiPXWEB",
                 fluidRow(apiPXWEB.col1,
                          apiPXWEB.col2)
+                )
+
+       ,
+        tabItem(tabName = "apiSTATAT",
+                fluidRow(apiSTATAT.col1,
+                         apiSTATAT.col2)
                 )
 
        ,
@@ -132,6 +142,7 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
 
+    source(file.path("widgets", "apiSSB_server.R"), local = TRUE)
     source(file.path("widgets", "apiSTATAT_server.R"), local = TRUE)
     source(file.path("widgets", "apiPXWEB_server.R"), local = TRUE)
     source(file.path("widgets", "apiONS_server.R"), local = TRUE)
