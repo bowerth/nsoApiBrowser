@@ -15,10 +15,16 @@ output$uiPXWEB_datasetname <- renderUI({
   } else if (baseurl=="http://pxnet2.stat.fi/PXWEB/api/v1/en/StatFin") {
     datasetname_choices <- list(
       PX_070_vtp_tau_071 = "kan/vtp/070_vtp_tau_071.px", # Value added, detail components
-      PX_080_vtp_tau_081 = "kan/vtp/080_vtp_tau_081.px", # "Employment and hours worked 1975-2014"
-      PX_180_vtp_tau_181 = "kan/vtp/180_vtp_tau_181.px", # "Gross fixed capital formation 1975-2014"
-      PX_190_vtp_tau_191 = "kan/vtp/190_vtp_tau_191.px"  # "Gross capital, Net capital, consumption and retirements of fixed capital 1975
-      )
+      PX_080_vtp_tau_081 = "kan/vtp/080_vtp_tau_081.px", # Employment and hours worked 1975-2014
+      PX_180_vtp_tau_181 = "kan/vtp/180_vtp_tau_181.px", # Gross fixed capital formation 1975-2014
+      PX_190_vtp_tau_191 = "kan/vtp/190_vtp_tau_191.px"  # Gross capital, Net capital, consumption and retirements of fixed capital 1975
+    )
+  } else if (baseurl=="http://data.ssb.no/api/v0/en/table") {
+    datasetname_choices <- list(
+      NRProduksjonInnt = "nk/nk03/nr/NRProduksjonInnt", # 09170: Production account and income generation, by industry 1970 - 2015
+      NRLonnSyssel = "nk/nk03/nr/NRLonnSyssel", # 09174: Wages and salaries, employment and productivity, by industry 1970 - 2015
+      NRInvestKapital = "nk/nk03/nr/NRInvestKapital" # Gross fixed capital formation and capital stocks, by type or industry 1970 - 2015
+    )
   }
 
   selectInput("apipxweb_datasetname", "Dataset",

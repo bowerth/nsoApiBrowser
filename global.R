@@ -17,6 +17,7 @@ library(nsoApi)
 ## remove.packages("stanApi")
 
 ## use from github - unmodified
+## devtools::install_github("rOpenGov/pxweb")
 library(pxweb) # SWE, FIN, DNK
 
 library(RCurl)

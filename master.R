@@ -9,11 +9,13 @@ path <- file.path(dbpath, "GitHub", "nsoApi", "inst", "nsoApiBrowser")
 setwd(path)
 
 ## install.packages("shinydashboard")
+## devtools::install_github("timelyportfolio/rcdimple")
 source("app.R")
 ## shinyApp(ui, server, options = list(port = 4848, launch.browser = FALSE))
 shinyApp(ui, server, options = list(port = 3838, launch.browser = FALSE))
 
 ## ?shiny::shinyApp
+
 
 ## path.dlpackage <- file.path(dlpath, "Rpkgs")
 ## ## dir.create(path = path.dlpackage)

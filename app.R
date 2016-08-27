@@ -17,14 +17,16 @@ sidebar <- dashboardSidebar(
     ## disable = TRUE,
     sidebarMenu(
 
-        menuItem("SSB: Statistics Norway", tabName = "apiSSB", icon = icon("line-chart"))
-       ,
-
-        menuItem("About", tabName = "about", icon = icon("info"))
-        ,
-
+       ##  menuItem("WDS: Statistics Canada", tabName = "apiWDS", icon = icon("line-chart"))
+       ## ,
         menuItem("PX-Web: Nordic Countries", tabName = "apiPXWEB", icon = icon("line-chart"))
        ,
+
+        menuItem("USA: Bureau of Economic Analysis", tabName = "apiBEA", icon = icon("line-chart"))
+       ,
+
+       ##  menuItem("SSB: Statistics Norway", tabName = "apiSSB", icon = icon("line-chart"))
+       ## ,
 
         menuItem("StatAT: Statistics Austria", tabName = "apiSTATAT", icon = icon("line-chart"))
        ,
@@ -35,8 +37,6 @@ sidebar <- dashboardSidebar(
        ,
         ## test server availability: https://www-genesis.destatis.de/genesis/
         menuItem("DEU: DESTATIS GENESIS", tabName = "apiGENESIS", icon = icon("line-chart"))
-       ,
-        menuItem("USA: Bureau of Economic Analysis", tabName = "apiBEA", icon = icon("line-chart"))
        ,
         radioButtons("sidebar_download_data_format", "Data Download Format",
                      choices = list(
@@ -63,12 +63,15 @@ sidebar <- dashboardSidebar(
        ,
         numericInput("sidebar_maxfilter", "Max. Filter Fields", value = 10)
        ,
-        textInput("sidebar_httpproxy", "HTTP Proxy", ui.httpproxy) # ifelse(exists("ui.httpproxy"), ui.httpproxy, ""))
+      textInput("sidebar_httpproxy", "HTTP Proxy", ui.httpproxy) # ifelse(exists("ui.httpproxy"), ui.httpproxy, ""))
+      ,
+      menuItem("About", tabName = "about", icon = icon("info"))
 
     )
 )
 
-source(file.path("widgets", "apiSSB_ui.R"))
+## source(file.path("widgets", "apiWDS_ui.R"))
+## source(file.path("widgets", "apiSSB_ui.R"))
 source(file.path("widgets", "apiSTATAT_ui.R"))
 source(file.path("widgets", "apiPXWEB_ui.R"))
 source(file.path("widgets", "apiONS_ui.R"))
@@ -80,12 +83,17 @@ source(file.path("widgets", "about_ui.R"))
 body <- dashboardBody(
     tabItems(
 
-        tabItem(tabName = "apiSSB",
-                fluidRow(apiSSB.col1,
-                         apiSSB.col2)
-                )
+       ##  tabItem(tabName = "apiWDS",
+       ##          fluidRow(apiWDS.col1,
+       ##                   apiWDS.col2)
+       ##          )
+       ## ,
+       ##  tabItem(tabName = "apiSSB",
+       ##          fluidRow(apiSSB.col1,
+       ##                   apiSSB.col2)
+       ##          )
+      ## ,
 
-       ,
         tabItem(tabName = "about",
               about.output)
 
@@ -142,7 +150,8 @@ ui <- dashboardPage(
 
 server <- function(input, output) {
 
-    source(file.path("widgets", "apiSSB_server.R"), local = TRUE)
+    ## source(file.path("widgets", "apiWDS_server.R"), local = TRUE)
+    ## source(file.path("widgets", "apiSSB_server.R"), local = TRUE)
     source(file.path("widgets", "apiSTATAT_server.R"), local = TRUE)
     source(file.path("widgets", "apiPXWEB_server.R"), local = TRUE)
     source(file.path("widgets", "apiONS_server.R"), local = TRUE)

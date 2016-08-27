@@ -2,6 +2,7 @@
 
 ## ui.apiPXWEB.baseurl <- "http://opendata.pxweb.nl/ODataApi/OData"
 ui.apiPXWEB.baseurl <- list(
+  "SSB Norway" = "http://data.ssb.no/api/v0/en/table",
   "SCB Sweden" = "http://api.scb.se/OV0104/v1/doris/en/ssd",
   "PXNET2 Finland" = "http://pxnet2.stat.fi/PXWEB/api/v1/en/StatFin"
   )
